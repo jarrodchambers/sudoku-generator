@@ -74,25 +74,22 @@ class Show
 	end
 end
 
-# Sample shows to test the program
-# Code to read it in from a file will go here eventually
+# Read shows from file in CSV format: title, venue, day, hour
 
-schedule = []
+shows = Hash.new
 
-schedule.push(Show.new("Uno","Venue1"))
-schedule.last.add_showtime(16, 7)
-schedule.last.add_showtime(17, 6.5)
+file = File.new("shows.txt", "r")
+while (line = file.gets)
+	# Parse lines into shows hash
+	fields = line.split(/,/)
+	if !shows[fields[0]] then shows[fields[0]] = Show.new(fields[0],fields[1]) end
+	time = fields[3].split(/:/)
+	hour = time[0].to_f + (time[1].to_f / 60.0)
+	shows[fields[0]].add_showtime(fields[2],hour)
+end
 
-schedule.push(Show.new("Dos","Venue1"))
-schedule.last.add_showtime(16, 7)
-schedule.last.add_showtime(17, 7.5)
-
-schedule.push(Show.new("Tres","Venue2"))
-schedule.last.add_showtime(16, 7)
-
-schedule.push(Show.new("Quattro","Venue2"))
-schedule.last.add_showtime(16, 8)
-schedule.last.add_showtime(17, 7)
+# Convert the hash to an array for easier manipulation
+schedule = shows.values
 
 # Variable to track how many shows have not been scheduled
 unscheduled = schedule.length
